@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2025-12-15",
+  "taxYears": {
+    "2024": {
+      "standardMileageRate": 0.670,
+      "selfEmploymentTaxRate": 0.153,
+      "selfEmploymentMultiplier": 0.9235,
+      "homeOfficeRate": 5.0,
+      "homeOfficeMaxSquareFeet": 300,
+      "mealDeductionRate": 0.50,
+      "nec1099Threshold": 600,
+      "k1099GrossThreshold": 20000,
+      "k1099TransactionThreshold": 200,
+      "socialSecurityWageBase": 168600,
+      "standardDeductions": {
+        "single": 14600,
+        "married_filing_jointly": 29200,
+        "married_filing_separately": 14600,
+        "head_of_household": 21900
+      },
+      "brackets": {
+        "single": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 11600, "rate": 0.12},
+          {"threshold": 47150, "rate": 0.22},
+          {"threshold": 100525, "rate": 0.24},
+          {"threshold": 191950, "rate": 0.32},
+          {"threshold": 243725, "rate": 0.35},
+          {"threshold": 609350, "rate": 0.37}
+        ],
+        "married_filing_jointly": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 23200, "rate": 0.12},
+          {"threshold": 94300, "rate": 0.22},
+          {"threshold": 201050, "rate": 0.24},
+          {"threshold": 383900, "rate": 0.32},
+          {"threshold": 487450, "rate": 0.35},
+          {"threshold": 731200, "rate": 0.37}
+        ],
+        "married_filing_separately": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 11600, "rate": 0.12},
+          {"threshold": 47150, "rate": 0.22},
+          {"threshold": 100525, "rate": 0.24},
+          {"threshold": 191950, "rate": 0.32},
+          {"threshold": 243725, "rate": 0.35},
+          {"threshold": 365600, "rate": 0.37}
+        ],
+        "head_of_household": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 16550, "rate": 0.12},
+          {"threshold": 63100, "rate": 0.22},
+          {"threshold": 100500, "rate": 0.24},
+          {"threshold": 191950, "rate": 0.32},
+          {"threshold": 243700, "rate": 0.35},
+          {"threshold": 609350, "rate": 0.37}
+        ]
+      }
+    },
+    "2025": {
+      "standardMileageRate": 0.70,
+      "selfEmploymentTaxRate": 0.153,
+      "selfEmploymentMultiplier": 0.9235,
+      "homeOfficeRate": 5.0,
+      "homeOfficeMaxSquareFeet": 300,
+      "mealDeductionRate": 0.50,
+      "nec1099Threshold": 600,
+      "k1099GrossThreshold": 20000,
+      "k1099TransactionThreshold": 200,
+      "socialSecurityWageBase": 176100,
+      "standardDeductions": {
+        "single": 15750,
+        "married_filing_jointly": 31500,
+        "married_filing_separately": 15750,
+        "head_of_household": 23625
+      },
+      "brackets": {
+        "single": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 11925, "rate": 0.12},
+          {"threshold": 48475, "rate": 0.22},
+          {"threshold": 103350, "rate": 0.24},
+          {"threshold": 197300, "rate": 0.32},
+          {"threshold": 250525, "rate": 0.35},
+          {"threshold": 626350, "rate": 0.37}
+        ],
+        "married_filing_jointly": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 23850, "rate": 0.12},
+          {"threshold": 96950, "rate": 0.22},
+          {"threshold": 206700, "rate": 0.24},
+          {"threshold": 394600, "rate": 0.32},
+          {"threshold": 501050, "rate": 0.35},
+          {"threshold": 751600, "rate": 0.37}
+        ],
+        "married_filing_separately": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 11925, "rate": 0.12},
+          {"threshold": 48475, "rate": 0.22},
+          {"threshold": 103350, "rate": 0.24},
+          {"threshold": 197300, "rate": 0.32},
+          {"threshold": 250525, "rate": 0.35},
+          {"threshold": 375800, "rate": 0.37}
+        ],
+        "head_of_household": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 17000, "rate": 0.12},
+          {"threshold": 64850, "rate": 0.22},
+          {"threshold": 103350, "rate": 0.24},
+          {"threshold": 197300, "rate": 0.32},
+          {"threshold": 250500, "rate": 0.35},
+          {"threshold": 626350, "rate": 0.37}
+        ]
+      }
+    },
+    "2026": {
+      "standardMileageRate": 0.725,
+      "selfEmploymentTaxRate": 0.153,
+      "selfEmploymentMultiplier": 0.9235,
+      "homeOfficeRate": 5.0,
+      "homeOfficeMaxSquareFeet": 300,
+      "mealDeductionRate": 0.50,
+      "nec1099Threshold": 600,
+      "k1099GrossThreshold": 20000,
+      "k1099TransactionThreshold": 200,
+      "socialSecurityWageBase": 184500,
+      "standardDeductions": {
+        "single": 16100,
+        "married_filing_jointly": 32200,
+        "married_filing_separately": 16100,
+        "head_of_household": 24150
+      },
+      "brackets": {
+        "single": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 12400, "rate": 0.12},
+          {"threshold": 50400, "rate": 0.22},
+          {"threshold": 105700, "rate": 0.24},
+          {"threshold": 201775, "rate": 0.32},
+          {"threshold": 256225, "rate": 0.35},
+          {"threshold": 640600, "rate": 0.37}
+        ],
+        "married_filing_jointly": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 24800, "rate": 0.12},
+          {"threshold": 100800, "rate": 0.22},
+          {"threshold": 211400, "rate": 0.24},
+          {"threshold": 403550, "rate": 0.32},
+          {"threshold": 512450, "rate": 0.35},
+          {"threshold": 768700, "rate": 0.37}
+        ],
+        "married_filing_separately": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 12400, "rate": 0.12},
+          {"threshold": 50400, "rate": 0.22},
+          {"threshold": 105700, "rate": 0.24},
+          {"threshold": 201775, "rate": 0.32},
+          {"threshold": 256225, "rate": 0.35},
+          {"threshold": 384350, "rate": 0.37}
+        ],
+        "head_of_household": [
+          {"threshold": 0, "rate": 0.10},
+          {"threshold": 17700, "rate": 0.12},
+          {"threshold": 67450, "rate": 0.22},
+          {"threshold": 105700, "rate": 0.24},
+          {"threshold": 201750, "rate": 0.32},
+          {"threshold": 256200, "rate": 0.35},
+          {"threshold": 640600, "rate": 0.37}
+        ]
+      }
+    }
+  }
+}
