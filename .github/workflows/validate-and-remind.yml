@@ -1,0 +1,149 @@
+name: Validate Rates & Annual Reminder
+
+on:
+  push:
+    paths: ['irs-rates.json']
+  pull_request:
+    paths: ['irs-rates.json']
+  schedule:
+    # Run every Monday at 9 AM ET during rate announcement season (Oct-Jan)
+    - cron: '0 14 * 10-12,1 1'  # UTC 14:00 = ET 9:00 AM
+
+jobs:
+  validate:
+    name: Validate irs-rates.json
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON syntax
+        run: python3 -c "import json; data=json.load(open('irs-rates.json')); print('Valid JSON')"
+
+      - name: Validate schema
+        run: |
+          python3 << 'EOF'
+          import json, sys
+
+          with open('irs-rates.json') as f:
+              data = json.load(f)
+
+          errors = []
+
+          # Check top-level fields
+          if data.get('schemaVersion') != 1:
+              errors.append('schemaVersion must be 1')
+          if 'lastUpdated' not in data:
+              errors.append('Missing lastUpdated')
+          if 'taxYears' not in data:
+              errors.append('Missing taxYears')
+
+          required_fields = [
+              'standardMileageRate', 'selfEmploymentTaxRate', 'selfEmploymentMultiplier',
+              'homeOfficeRate', 'homeOfficeMaxSquareFeet', 'mealDeductionRate',
+              'nec1099Threshold', 'k1099GrossThreshold', 'k1099TransactionThreshold',
+              'socialSecurityWageBase'
+          ]
+
+          filing_statuses = ['single', 'married_filing_jointly', 'married_filing_separately', 'head_of_household']
+
+          for year, year_data in data.get('taxYears', {}).items():
+              for field in required_fields:
+                  if field not in year_data:
+                      errors.append(f'{year}: Missing {field}')
+
+              # Validate brackets if present
+              if 'brackets' in year_data:
+                  for status in filing_statuses:
+                      brackets = year_data['brackets'].get(status, [])
+                      if not brackets:
+                          errors.append(f'{year}: Missing brackets for {status}')
+                      else:
+                          # Check brackets are ascending
+                          thresholds = [b['threshold'] for b in brackets]
+                          if thresholds != sorted(thresholds):
+                              errors.append(f'{year}: Brackets not ascending for {status}')
+                          # Check first bracket starts at 0
+                          if thresholds[0] != 0:
+                              errors.append(f'{year}: First bracket must start at 0 for {status}')
+                          # Check rates are between 0 and 1
+                          for b in brackets:
+                              if not (0 < b['rate'] <= 1):
+                                  errors.append(f'{year}: Invalid rate {b["rate"]} for {status}')
+
+              # Validate standard deductions if present
+              if 'standardDeductions' in year_data:
+                  for status in filing_statuses:
+                      if status not in year_data['standardDeductions']:
+                          errors.append(f'{year}: Missing standard deduction for {status}')
+
+              # Sanity checks
+              if year_data.get('standardMileageRate', 0) > 2.0:
+                  errors.append(f'{year}: standardMileageRate seems too high (>{year_data["standardMileageRate"]})')
+              if year_data.get('selfEmploymentTaxRate', 0) != 0.153:
+                  errors.append(f'{year}: selfEmploymentTaxRate changed from 15.3%? Verify this is intentional.')
+
+          if errors:
+              print('VALIDATION ERRORS:')
+              for e in errors:
+                  print(f'  - {e}')
+              sys.exit(1)
+          else:
+              print(f'All {len(data["taxYears"])} tax years validated successfully.')
+          EOF
+
+  remind:
+    name: Check for New Tax Year
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if next year exists
+        id: check
+        run: |
+          NEXT_YEAR=$(($(date +%Y) + 1))
+          if python3 -c "import json; data=json.load(open('irs-rates.json')); exit(0 if '$NEXT_YEAR' in data['taxYears'] else 1)" 2>/dev/null; then
+            echo "has_next_year=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_next_year=false" >> $GITHUB_OUTPUT
+          fi
+          echo "next_year=$NEXT_YEAR" >> $GITHUB_OUTPUT
+
+      - name: Create reminder issue
+        if: steps.check.outputs.has_next_year == 'false'
+        run: |
+          NEXT_YEAR=${{ steps.check.outputs.next_year }}
+          # Check if issue already exists
+          EXISTING=$(gh issue list --search "Update IRS rates for $NEXT_YEAR" --state open --json number -q '.[0].number' || echo "")
+          if [ -z "$EXISTING" ]; then
+            gh issue create \
+              --title "Update IRS rates for $NEXT_YEAR" \
+              --body "$(cat <<BODY
+          ## Time to update IRS rates for tax year $NEXT_YEAR
+
+          The IRS typically announces the following in October-December:
+          - **Standard mileage rate** (usually late December)
+          - **Tax brackets & standard deductions** (Revenue Procedure, usually October/November)
+          - **Social Security wage base** (usually October)
+
+          ### What to update in \`irs-rates.json\`:
+          1. Add a new \`\"$NEXT_YEAR\"\` entry under \`taxYears\`
+          2. Update: \`standardMileageRate\`, \`socialSecurityWageBase\`, \`standardDeductions\`, \`brackets\`
+          3. Update \`lastUpdated\` date
+          4. Push to main — all GigLedger apps will pick up new rates within 24 hours
+
+          ### Where to find official rates:
+          - Mileage rate: https://www.irs.gov/tax-professionals/standard-mileage-rates
+          - Revenue Procedure (brackets): https://www.irs.gov/irb (search for "Revenue Procedure $NEXT_YEAR")
+          - SS wage base: https://www.ssa.gov/oact/cola/cbb.html
+
+          ### Validation
+          Push your changes — the GitHub Action will validate the JSON automatically.
+          BODY
+          )"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
