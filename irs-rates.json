@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2025-12-15",
+  "lastUpdated": "2026-07-16",
   "taxYears": {
     "2024": {
       "standardMileageRate": 0.670,
@@ -116,6 +116,10 @@
     },
     "2026": {
       "standardMileageRate": 0.725,
+      "standardMileageBands": [
+        {"from": "2026-01-01", "rate": 0.725},
+        {"from": "2026-07-01", "rate": 0.760}
+      ],
       "selfEmploymentTaxRate": 0.153,
       "selfEmploymentMultiplier": 0.9235,
       "homeOfficeRate": 5.0,
