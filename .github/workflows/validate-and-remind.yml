@@ -8,6 +8,12 @@ on:
   schedule:
     # Run every Monday at 9 AM ET during rate announcement season (Oct-Jan)
     - cron: '0 14 * 10-12,1 1'  # UTC 14:00 = ET 9:00 AM
+    # Keep-alive, 1st of every month. GitHub switches off scheduled workflows in a
+    # repository with no activity for 60 days, and this repository is quiet from
+    # February to September — on 2026-10-05 the season's first Monday run fired and
+    # GitHub disabled the workflow 25 seconds later. See the `keepalive` job.
+    - cron: '0 13 1 * *'
+  workflow_dispatch:
 
 jobs:
   validate:
@@ -95,7 +101,8 @@ jobs:
   remind:
     name: Check for New Tax Year
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
+    # Only the Monday season schedule opens reminders; the monthly keep-alive does not.
+    if: github.event_name == 'schedule' && github.event.schedule == '0 14 * 10-12,1 1'
     permissions:
       issues: write
     steps:
@@ -145,5 +152,20 @@ jobs:
           BODY
           )"
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  keepalive:
+    name: Keep the schedule alive
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      actions: write
+    steps:
+      # Re-enabling a workflow through the API counts as activity and restarts GitHub's
+      # 60-day inactivity clock, so the Monday reminders are still switched on when
+      # October comes round.
+      - name: Re-enable this workflow
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/validate-and-remind.yml/enable"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
